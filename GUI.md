@@ -23,22 +23,27 @@ import javax.swing.*;
 
 public class CovidGame implements ActionListener, KeyListener, MouseListener, MouseMotionListener
 {
-	//Test with mouse adapter
-
 	JFrame gameBoard; 
 	JButton next; 
-	JButton isolation; 
+	
 	int dayCount; 
+	//Holds all the people on the game board. 
 	Person[][] victims; 
 	JLabel day; 
-	//JLayeredPane layout;
 	Timer timer; 
 	TimerTask task; 
 	JLabel hovered; 
-	//MouseAdapter ma; 
 	
+	//Randomly selects two individuals and they will not infect anyone around them. 
+	JButton isolation; 
+	int isolationCounter; 
+	ArrayList<Person> isolated; 
+	
+	
+	//Randomly selects two individuals and make it more difficult for them to get infected. 
 	JButton handSanitizer;
 	int sanitizerCount; 
+	ArrayList<Person> sanitized; 
 	 
 	ArrayList<Person> infected; 
 	JLabel numInfected; 
@@ -50,7 +55,9 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 	{
 		//this.layout = new JLayeredPane();
 		this.createGUI();
+		this.isolated = new ArrayList<Person>();
 		this.infected = new ArrayList<Person>();
+		this.sanitized = new ArrayList<Person>();
 		this.randomizer = new Random();
 		this.dayCount = 0; 
 		this.timer = new Timer(); 
@@ -64,7 +71,9 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 	{
 		//this.layout = new JLayeredPane();
 		this.createGUI();
+		this.isolated = new ArrayList<Person>();
 		this.infected = new ArrayList<Person>();
+		this.sanitized = new ArrayList<Person>();
 		this.randomizer = new Random();
 		this.dayCount = 0; 
 		this.timer = new Timer();
@@ -97,7 +106,7 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 		//this.start.setToolTipText("WORKING");
 		this.gameBoard.add(this.next);
 		
-		this.isolation = new JButton("Pause");
+		this.isolation = new JButton("Isolation");
 		this.isolation.setSize(150, 50);
 		this.isolation.setLocation(1200, 430);
 		this.isolation.addActionListener(this);
@@ -214,21 +223,6 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 			
 		};
 	}
-	
-	public void mouseClicked(MouseEvent e) 
-	{
-		
-	}
-
-	public void mousePressed(MouseEvent e)
-	{
-		
-	}
-
-	public void mouseReleased(MouseEvent e)
-	{
-
-	}
 
 	public void mouseEntered(MouseEvent e) 
 	{
@@ -236,26 +230,6 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 		{
 			this.searchArray((JButton)e.getSource());
 		}	
-	}
-
-	public void mouseExited(MouseEvent e) 
-	{
-		
-	}
-
-	public void keyTyped(KeyEvent e) 
-	{
-	
-	}
-
-	public void keyPressed(KeyEvent e) 
-	{
-		
-	}
-
-	public void keyReleased(KeyEvent e) 
-	{
-		
 	}
 
 	public void actionPerformed(ActionEvent e) 
@@ -279,36 +253,28 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 					int rndNum = this.randomizer.nextInt(100);
 					//System.out.println(rndNum);
 					int keepTrack = this.checkCondition(this.infected.get(i));
-					if(keepTrack ==1 && rndNum <= 5)
+					if(keepTrack ==1 && rndNum <= 4)
 					{
-						//8 percent chance of dying 
-						this.infected.get(i).avatar.setBackground(Color.black);	
-						this.infected.get(i).avatar.setText("X");
-						this.infected.get(i).avatar.setForeground(Color.black);
+						//5 percent chance of dying 
+						this.setBackground(this.infected.get(i).avatar);
 						this.infected.remove(i);
 					}
-					else if(keepTrack ==2 && rndNum <= 8)
+					else if(keepTrack ==2 && rndNum <= 6)
 					{
-						//11% chance of dying
-						this.infected.get(i).avatar.setBackground(Color.black);
-						this.infected.get(i).avatar.setText("X");
-						this.infected.get(i).avatar.setForeground(Color.black);
+						//7% chance of dying
+						this.setBackground(this.infected.get(i).avatar);
 						this.infected.remove(i);
 					}
-					else if(keepTrack ==3 && rndNum <= 11)
+					else if(keepTrack ==3 && rndNum <= 8)
 					{
-						//14% chance of dying
-						this.infected.get(i).avatar.setBackground(Color.black);
-						this.infected.get(i).avatar.setText("X");
-						this.infected.get(i).avatar.setForeground(Color.black);
+						//9% chance of dying
+						this.setBackground(this.infected.get(i).avatar);
 						this.infected.remove(i);
 					}
-					else if (keepTrack == 0 && rndNum <= 3)
+					else if (keepTrack == 0 && rndNum <= 2)
 					{
-						//5% of dying
-						this.infected.get(i).avatar.setBackground(Color.black);
-						this.infected.get(i).avatar.setText("X");
-						this.infected.get(i).avatar.setForeground(Color.black);
+						//3 of dying
+						this.setBackground(this.infected.get(i).avatar);
 						this.infected.remove(i);
 					}
 				}
@@ -340,9 +306,43 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 				}
 			}
 		}
+		else if (e.getSource() == this.isolation)
+		{
+			for (int i = 0; i <= 1; i++)
+			{
+				this.isolated.add(this.victims[this.randomizer.nextInt(this.victims.length)][this.randomizer.nextInt(this.victims[0].length)]);
+			}
+			JOptionPane.showMessageDialog(null, "Two people were randomly picked for isolation and will not be infecting anyone aronud them (can only be used three times).");
+			this.isolationCounter++;
+			if(this.isolationCounter >3)
+			{
+				this.isolation.setEnabled(false);
+			}
+		}
+		else if (e.getSource() == this.handSanitizer)
+		{
+			for (int i = 0; i <= 1; i++)
+			{
+				this.sanitized.add(this.victims[this.randomizer.nextInt(this.victims.length)][this.randomizer.nextInt(this.victims[0].length)]);
+			}
+			JOptionPane.showMessageDialog(null, "Two people were randomly picked that pay attention to sanitization and are less likely to get infected (can be used only three times).");
+
+			this.sanitizerCount++;
+			if (this.sanitizerCount > 3)
+			{
+				this.handSanitizer.setEnabled(false);
+			}
+		}
 		
 		this.numInfected.setText("Infected count: " + this.removeFromArray());
 		this.removeFromArray();
+	}
+	
+	public void setBackground(JButton set)
+	{
+		set.setBackground(Color.black);
+		set.setText("X");
+		set.setForeground(Color.black);
 	}
 	
 	public boolean checkDupe(Person dupe)
@@ -377,14 +377,19 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 		{
 			for (int y = 0; y <= this.victims[i].length-1; y++)
 			{
-				if ((this.victims[i][y].status == false) && (this.victims[i][y].immune == false)&&
+				if ((this.victims[i][y].status == false) && (this.victims[i][y].immune == false) && (this.checkArrayList(this.victims[i][y], this.isolated) == false) &&
 						(this.victims[i][y].avatar.getY() == ylocation + 55 || this.victims[i][y].avatar.getY() == ylocation - 55 || this.victims[i][y].avatar.getY() == ylocation) && 
 								(this.victims[i][y].avatar.getX() ==xlocation || this.victims[i][y].avatar.getX() == xlocation + 55 || this.victims[i][y].avatar.getX() == xlocation -55))
 				{
 					int rndNum = this.randomizer.nextInt(100);
-					if (rndNum<= 44)
+					if (rndNum <= 44 && this.checkArrayList(this.victims[i][y], this.sanitized) == false)
 					{
 						//System.out.println("NOT");
+						this.victims[i][y].avatar.setBackground(Color.red);
+						this.victims[i][y].status = true; 
+					}
+					else if (rndNum <= 11 && this.checkArrayList(this.victims[i][y], this.sanitized) == true)
+					{
 						this.victims[i][y].avatar.setBackground(Color.red);
 						this.victims[i][y].status = true; 
 					}
@@ -393,6 +398,17 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 		}
 	}
 	
+	public boolean checkArrayList(Person selected, ArrayList<Person> checked)
+	{
+		for (int i = 0; i<= checked.size()-1; i++)
+		{
+			if (checked.get(i) == selected)
+			{
+				return true; 
+			}
+		}
+		return false; 
+	}
 	
 	public int checkCondition(Person infected)
 	{
@@ -413,24 +429,6 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 		return keepTrack; 
 	}
 	
-	public static void main(String args[])
-	{
-		CovidGame cg = new CovidGame();
-	}
-	
-	public void mouseDragged(MouseEvent e) 
-	{
-	}
-	
-	public void mouseMoved(MouseEvent e) 
-	{	
-	}
-	
-	public void checkLost()
-	{
-		
-	}
-	
 	public void searchArray(JButton given)
 	{
 		for (int i = 0; i <= this.victims.length-1; i ++)
@@ -443,6 +441,61 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 				}	
 			}
 		}
+	}
+	
+	public static void main(String args[])
+	{
+		CovidGame cg = new CovidGame();
+	}
+	
+	public void mouseDragged(MouseEvent e) 
+	{
+		
+	}
+	
+	public void mouseMoved(MouseEvent e) 
+	{
+		
+	}
+	
+	public void checkLost()
+	{
+		
+	}
+	
+	public void mouseClicked(MouseEvent e) 
+	{
+		
+	}
+
+	public void mousePressed(MouseEvent e)
+	{
+		
+	}
+
+	public void mouseReleased(MouseEvent e)
+	{
+
+	}
+	
+	public void mouseExited(MouseEvent e) 
+	{
+		
+	}
+
+	public void keyTyped(KeyEvent e) 
+	{
+	
+	}
+
+	public void keyPressed(KeyEvent e) 
+	{
+		
+	}
+
+	public void keyReleased(KeyEvent e) 
+	{
+		
 	}
 }
 
