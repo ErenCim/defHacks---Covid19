@@ -246,32 +246,32 @@ public class CovidGame implements ActionListener, KeyListener, MouseListener, Mo
 			this.day.setText("<html><div style='text-align: center;'> Day " + this.dayCount + "<html>");
 			
 			//System.out.println(dayCount);
-			if(this.dayCount%3 == 0)
+			if(this.dayCount% 8 == 0)
 			{
 				for(int i = 0; i <= this.infected.size()-1; i++)
 				{
 					int rndNum = this.randomizer.nextInt(100);
 					//System.out.println(rndNum);
 					int keepTrack = this.checkCondition(this.infected.get(i));
-					if(keepTrack ==1 && rndNum <= 4)
+					if(keepTrack ==1 && rndNum <= 2)
 					{
 						//5 percent chance of dying 
 						this.setBackground(this.infected.get(i).avatar);
 						this.infected.remove(i);
 					}
-					else if(keepTrack ==2 && rndNum <= 6)
+					else if(keepTrack ==2 && rndNum <= 4)
 					{
 						//7% chance of dying
 						this.setBackground(this.infected.get(i).avatar);
 						this.infected.remove(i);
 					}
-					else if(keepTrack ==3 && rndNum <= 8)
+					else if(keepTrack ==3 && rndNum <= 5)
 					{
 						//9% chance of dying
 						this.setBackground(this.infected.get(i).avatar);
 						this.infected.remove(i);
 					}
-					else if (keepTrack == 0 && rndNum <= 2)
+					else if (keepTrack == 0 && rndNum <= 1)
 					{
 						//3 of dying
 						this.setBackground(this.infected.get(i).avatar);
