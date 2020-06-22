@@ -11,17 +11,21 @@ import javax.swing.*;
 
 public class Person 
 {
+	boolean status; 
 	boolean preExistCon; 
 	int age; 
 	char gender; 
 	String ethnicity;
-	JLabel avatar;
+	JButton avatar;
+	boolean immune;
 	
 	public Person()
 	{
 		this.preExistCon = false;
-		this.avatar = new JLabel(); 
+		this.avatar = new JButton(); 
 		this.age = 0; 
+		this.immune = false; 
+		this.status = false;
 		this.gender = ' ';
 		this.ethnicity = "";
 	}
@@ -29,7 +33,9 @@ public class Person
 	public Person(boolean precon, int a, String e, char gender) 
 	{
 		this.preExistCon = precon;
-		this.avatar = new JLabel();
+		this.avatar = new JButton();
+		this.status = false; 
+		this.immune = false; 
 		this.age = a;
 		this.ethnicity = e;	
 		this.gender= gender;
